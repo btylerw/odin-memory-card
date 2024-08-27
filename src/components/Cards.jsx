@@ -6,6 +6,8 @@ function Cards() {
     // Array used to check if a pokemon has been clicked or not
     const [selectedCard, setSelectedCard] = useState([])
     const [data, setData] = useState([])
+    // Boolean that is flipped when game is lost to signal board reset
+    const [reset, setReset] = useState(false);
 
     useEffect(() => {
         async function fetchPokemon() {
@@ -27,7 +29,7 @@ function Cards() {
             }
         }
         fetchPokemon();
-    }, [])
+    }, [reset])
 
     // Updates bestScore only if the next updated currentScore is greater
     const checkBestScore = (score) => {
@@ -36,22 +38,22 @@ function Cards() {
         );
     }
 
+    // Pushes pokemon name to selectedCard if that pokemon does not exist in it
+    // If pokemon name already exists, clears array and resets currentScore
+    // If name does not exist, scores are updated accordingly
     const handlePokemonClick = (name) => {
         if (selectedCard.includes(name)) {
             setCurrentScore(0);
             setSelectedCard([]);
+            setReset(!reset);
         } else {
             setCurrentScore(currentScore+1);
             checkBestScore(currentScore+1);
             setSelectedCard(selectedCard => [...selectedCard, name]);
         }
     }
-    // Pushes pokemon name to selectedCard if that pokemon does not exist in it
-    // If pokemon name already exists, clears array and resets currentScore
-    // If name does not exist, scores are updated accordingly
 
     // Grabs 12 random pokemon from the 386 and creates a grid of divs for each one
-    // TODO: Need to randomize grid with the same pokemon. Currently repopulates grid from entire pool of 386 pokemon
     const createGrid = () => {
         const grid = data.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
         return grid.map((data, index) => {
