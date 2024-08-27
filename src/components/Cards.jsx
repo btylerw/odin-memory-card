@@ -27,7 +27,7 @@ function Cards() {
     }, [])
 
     const createGrid = () => {
-        const grid = data.sort(() => 0.5 - Math.random()).slice(0, 5 * 5);
+        const grid = data.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
         return grid.map((data, index) => {
             return (
                 <div
