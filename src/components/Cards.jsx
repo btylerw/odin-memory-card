@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 
 function Cards() {
     const [currentScore, setCurrentScore] = useState(0)
@@ -19,8 +19,8 @@ function Cards() {
                         return await detailedRes.json();
                     })
                 )
-
-                setData(cleanedData);
+                const newData = cleanedData.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
+                setData(newData);
             }
             catch(err) {
                 console.error("Error fetching data from API: ", err);
@@ -36,9 +36,6 @@ function Cards() {
         );
     }
 
-    // Pushes pokemon name to selectedCard if that pokemon does not exist in it
-    // If pokemon name already exists, clears array and resets currentScore
-    // If name does not exist, scores are updated accordingly
     const handlePokemonClick = (name) => {
         if (selectedCard.includes(name)) {
             setCurrentScore(0);
@@ -49,8 +46,12 @@ function Cards() {
             setSelectedCard(selectedCard => [...selectedCard, name]);
         }
     }
+    // Pushes pokemon name to selectedCard if that pokemon does not exist in it
+    // If pokemon name already exists, clears array and resets currentScore
+    // If name does not exist, scores are updated accordingly
 
     // Grabs 12 random pokemon from the 386 and creates a grid of divs for each one
+    // TODO: Need to randomize grid with the same pokemon. Currently repopulates grid from entire pool of 386 pokemon
     const createGrid = () => {
         const grid = data.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
         return grid.map((data, index) => {
@@ -65,8 +66,9 @@ function Cards() {
                 </div>
             )
         })
-    }
+    };
 
+    console.log(data);
     return (
         <>
             <div>
