@@ -5,7 +5,10 @@ function Cards() {
     const [bestScore, setBestScore] = useState(0)
     // Array used to check if a pokemon has been clicked or not
     const [selectedCard, setSelectedCard] = useState([])
+    // Will contain all gen 1-3 Pokemon
     const [data, setData] = useState([])
+    // Will only contain 12 of the pokemon from data
+    const [pokemon, setPokemon] = useState([])
     // Boolean that is flipped when game is lost to signal board reset
     const [reset, setReset] = useState(false);
 
@@ -21,15 +24,29 @@ function Cards() {
                         return await detailedRes.json();
                     })
                 )
-                const newData = cleanedData.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
-                setData(newData);
+                setData(cleanedData);
             }
             catch(err) {
                 console.error("Error fetching data from API: ", err);
             }
         }
         fetchPokemon();
-    }, [reset])
+    }, [])
+
+    // Takes info from API fetch and randomly grabs 12 to use for game
+    // Resets when game is lost
+    useEffect(() => {
+        async function assignPokemon() {
+            try {
+                const newData = data.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
+                setPokemon(newData);
+            }
+            catch(err) {
+                console.error("Error assigning pokemon: ", err);
+            }
+        }
+        assignPokemon();
+    }, [reset, data])
 
     // Updates bestScore only if the next updated currentScore is greater
     const checkBestScore = (score) => {
@@ -55,22 +72,28 @@ function Cards() {
 
     // Grabs 12 random pokemon from the 386 and creates a grid of divs for each one
     const createGrid = () => {
-        const grid = data.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
-        return grid.map((data, index) => {
+        if (!pokemon) {
+            return (
+                <div>
+                    Loading...
+                </div>
+            )
+        }
+        const grid = pokemon.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
+        return grid.map((pokemon, index) => {
             return (
                 <div
                     key={index}
                     className="grid"
-                    onClick={() => handlePokemonClick(data.name)}
+                    onClick={() => handlePokemonClick(pokemon.name)}
                 >
-                    <img src={data.sprites.front_default} alt="" />
-                    <p>{data.name}</p>
+                    <img src={pokemon.sprites.front_default} alt="" />
+                    <p>{pokemon.name}</p>
                 </div>
             )
         })
     };
 
-    console.log(data);
     return (
         <>
             <div>
