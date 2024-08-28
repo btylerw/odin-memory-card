@@ -72,13 +72,6 @@ function Cards() {
 
     // Grabs 12 random pokemon from the 386 and creates a grid of divs for each one
     const createGrid = () => {
-        if (!pokemon) {
-            return (
-                <div>
-                    Loading...
-                </div>
-            )
-        }
         const grid = pokemon.sort(() => 0.5 - Math.random()).slice(0, 4 * 3);
         return grid.map((pokemon, index) => {
             return (
